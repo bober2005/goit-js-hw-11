@@ -111,7 +111,7 @@ loadBtn.addEventListener(
         fetchImages(name, page).then(name => {
             let totalPages = Math.ceil(name.totalHits / perPage);
             renderGallery(name);
-            //smooth scroll
+
             const { height: cardHeight } = document
                 .querySelector('.gallery')
                 .firstElementChild.getBoundingClientRect();
@@ -120,7 +120,7 @@ loadBtn.addEventListener(
                 top: cardHeight * 2,
                 behavior: 'smooth',
             });
-            //===
+
             lightbox().refresh();
             console.log(`Current page: ${page}`);
 
