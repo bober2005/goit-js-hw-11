@@ -127,11 +127,9 @@ async function eventHandler(ev) {
     }
 }
 
-// Event listeners
 searchForm.addEventListener('submit', eventHandler);
 loadBtn.addEventListener('click', loadMore);
 
-// Scroll to top button event listener
 upBtn.addEventListener('click', () => {
     searchForm.scrollIntoView({
         behavior: 'smooth',
