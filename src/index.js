@@ -50,8 +50,7 @@ async function eventHandler(ev) {
                 renderGallery(name);
                 console.log(`Current page: ${page}`);
                 lightbox();
-                //const lightbox = new SimpleLightbox('.gallery a', {});
-                //smooth scrool to up
+
                 upBtn.style.display = 'block';
                 upBtn.addEventListener('click', () => {
                     searchingBox.scrollIntoView({
@@ -70,7 +69,7 @@ async function eventHandler(ev) {
                 Notiflix.Notify.failure(
                     'Sorry, there are no images matching your search query. Please try again.',
                 );
-                clear(gallery); //reset view in case of failure
+                clear(gallery);
             }
         })
         .catch(error => console.log(error));
