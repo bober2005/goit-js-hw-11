@@ -27,32 +27,51 @@ async function fetchImages(name, page) {
 }
 
 function clearGallery() {
-    gallery.innerHTML = '';
+    while (gallery.firstChild) {
+        gallery.removeChild(gallery.firstChild);
+    }
 }
 
-function renderGallery(data) {
-    const markup = data.hits
-        .map(hit => {
-            return `<div class="photo-card">
-      <a class="gallery__item" href="${hit.largeImageURL}"> <img class="gallery__image" src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" /></a>
-      <div class="info">
-        <p class="info-item">
-          <b>Likes</b> ${hit.likes}
-        </p>
-        <p class="info-item">
-          <b>Views</b> ${hit.views}
-        </p>
-        <p class="info-item">
-          <b>Comments</b> ${hit.comments}
-        </p>
-        <p class="info-item">
-          <b>Downloads</b> ${hit.downloads}
-        </p>
-      </div>
-    </div>`;
-        })
-        .join('');
-    gallery.innerHTML = markup;
+function appendGalleryItem(hit) {
+    const photoCard = document.createElement('div');
+    photoCard.classList.add('photo-card');
+
+    const galleryItemLink = document.createElement('a');
+    galleryItemLink.classList.add('gallery__item');
+    galleryItemLink.href = hit.largeImageURL;
+
+    const galleryItemImage = document.createElement('img');
+    galleryItemImage.classList.add('gallery__image');
+    galleryItemImage.src = hit.webformatURL;
+    galleryItemImage.alt = hit.tags;
+    galleryItemImage.loading = 'lazy';
+
+    galleryItemLink.appendChild(galleryItemImage);
+
+    const infoDiv = document.createElement('div');
+    infoDiv.classList.add('info');
+
+    const likesInfo = createInfoItem('Likes', hit.likes);
+    const viewsInfo = createInfoItem('Views', hit.views);
+    const commentsInfo = createInfoItem('Comments', hit.comments);
+    const downloadsInfo = createInfoItem('Downloads', hit.downloads);
+
+    infoDiv.appendChild(likesInfo);
+    infoDiv.appendChild(viewsInfo);
+    infoDiv.appendChild(commentsInfo);
+    infoDiv.appendChild(downloadsInfo);
+
+    photoCard.appendChild(galleryItemLink);
+    photoCard.appendChild(infoDiv);
+
+    gallery.appendChild(photoCard);
+}
+
+function createInfoItem(label, value) {
+    const p = document.createElement('p');
+    p.classList.add('info-item');
+    p.innerHTML = `<b>${label}</b> ${value}`;
+    return p;
 }
 
 async function loadMore() {
@@ -62,7 +81,7 @@ async function loadMore() {
 
     try {
         const result = await fetchImages(searchValue, page);
-        renderGallery(result);
+        result.hits.forEach(appendGalleryItem);
         lightbox();
 
         const cardHeight = gallery.firstElementChild.getBoundingClientRect().height;
@@ -105,7 +124,7 @@ async function eventHandler(ev) {
 
         if (result.hits.length > 0) {
             Notiflix.Notify.success(`Hooray! We found ${result.totalHits} images.`);
-            renderGallery(result);
+            result.hits.forEach(appendGalleryItem);
             lightbox();
 
             loadBtn.style.display = 'block';
